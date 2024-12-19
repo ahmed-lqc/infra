@@ -1,0 +1,19 @@
+{
+  "name": "@lqc/infrastructure",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "imports": {
+    "@apollo/subgraph": "npm:@apollo/subgraph@^2.9.3",
+    "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
+    "@graphql-yoga/plugin-defer-stream": "npm:@graphql-yoga/plugin-defer-stream@^3.10.6",
+    "@graphql-yoga/plugin-graphql-sse": "npm:@graphql-yoga/plugin-graphql-sse@^3.10.6",
+    "@std/expect": "jsr:@std/expect@^1.0.10",
+    "@std/testing": "jsr:@std/testing@^1.0.7",
+    "@types/amqplib": "npm:@types/amqplib@^0.10.6",
+    "amqp-connection-manager": "npm:amqp-connection-manager@^4.1.14",
+    "amqplib": "npm:amqplib@^0.10.5",
+    "di-wise": "npm:di-wise@^0.2.8",
+    "graphql-yoga": "npm:graphql-yoga@^5.10.6",
+    "hono": "npm:hono@^4.6.14"
+  }
+}
