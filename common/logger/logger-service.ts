@@ -1,4 +1,4 @@
-// @deno-types="npm:@types/lodash-es@^4.17.6"
+// @deno-types="@types/lodash-es"
 import { cloneDeep } from "npm:lodash-es";
 import { inject, Injectable, Scope, Scoped } from "di-wise";
 import {
@@ -78,7 +78,7 @@ export class LoggerService implements ILoggerService {
     ) {
       // GraphQL scenario
       this.hideSensitiveDataInGraphql(
-        metaClone as { query: string; variables: Record<string, unknown> }
+        metaClone as { query: string; variables: Record<string, unknown> },
       );
     } else if (this.isObject(metaClone?.body) && metaClone?.body) {
       // If there's a body, mask fields inside the body
@@ -117,7 +117,7 @@ export class LoggerService implements ILoggerService {
         meta.query = meta.query.replace(patterns.query, `${field}: "***"`);
         const variablesString = JSON.stringify(meta.variables).replace(
           patterns.variable,
-          `"${field}": "***"`
+          `"${field}": "***"`,
         );
         meta.variables = JSON.parse(variablesString);
       }

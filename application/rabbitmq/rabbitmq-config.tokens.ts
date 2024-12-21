@@ -20,5 +20,6 @@ export const RabbitMQConfigToken = Type<RabbitMQConfig>("RabbitMQConfig");
  * A token representing the connection manager for a RabbitMQ connection.
  * This token can be used to inject the RabbitMQ connection manager into other parts of the application.
  */
-export const RabbitMQConnectionToken =
-  Type<Promise<AmqpConnectionManager>>("RabbitMQConnection");
+export const RabbitMQConnectionToken = Type<Promise<AmqpConnectionManager>>(
+  "RabbitMQConnection",
+);

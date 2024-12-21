@@ -34,7 +34,7 @@ export class Application {
    * Creates and registers a feature module in the application.
    * @returns An instance of the created feature module.
    */
-  createModule() {
+  createModule(): FeatureModule {
     const moduleInstance = new FeatureModule(this.parentContainer);
     this.addModule(moduleInstance);
     return moduleInstance;
@@ -73,7 +73,6 @@ export class Application {
     // Resolve the AmqpManager and init the connection
     const amqpManager = this.parentContainer.resolve(AmqpManager);
     await amqpManager.init();
-
     return this;
   }
 
@@ -99,8 +98,9 @@ export class Application {
     // Resolve subgraphs from each module's container
     for (const mod of this.modules) {
       const moduleContainer = mod.getContainer();
-      const subgraphs: SubgraphType[] =
-        moduleContainer.resolveAll(SubgraphToken);
+      const subgraphs: SubgraphType[] = moduleContainer.resolveAll(
+        SubgraphToken,
+      );
       for (const subgraph of subgraphs) {
         const yoga = await subgraph.getServer();
         // deno-lint-ignore no-explicit-any

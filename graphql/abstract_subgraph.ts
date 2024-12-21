@@ -4,7 +4,7 @@ import type { gql } from "https://deno.land/x/graphql_tag@0.1.2/mod.ts";
 import type { GraphQLResolverMap } from "@apollo/subgraph/dist/schema-helper";
 import { useDeferStream } from "@graphql-yoga/plugin-defer-stream";
 import { useGraphQLSSE } from "@graphql-yoga/plugin-graphql-sse";
-import { createYoga } from "graphql-yoga";
+import { createYoga, type YogaServerInstance } from "graphql-yoga";
 import type { SubgraphType } from "./subgraph.types.ts";
 import { Inject } from "di-wise";
 import {
@@ -13,9 +13,8 @@ import {
 } from "../common/logger/logger.types.ts";
 
 export abstract class AbstractSubgraph<
-  TResolvers extends Record<string, unknown>
-> implements SubgraphType
-{
+  TResolvers extends Record<string, unknown>,
+> implements SubgraphType {
   abstract typeDefs: ReturnType<typeof gql>;
   abstract path: string;
 
@@ -28,7 +27,10 @@ export abstract class AbstractSubgraph<
     } as GraphQLResolverMap<unknown>;
   };
 
-  getServer() {
+  getServer(): YogaServerInstance<
+    Record<string | number | symbol, never>,
+    Record<string | number | symbol, never>
+  > {
     const schema = buildSubgraphSchema([
       {
         typeDefs: this.typeDefs,
@@ -51,6 +53,9 @@ export abstract class AbstractSubgraph<
         useDeferStream(),
       ],
     });
-    return yoga;
+    return yoga as unknown as YogaServerInstance<
+      Record<string | number | symbol, never>,
+      Record<string | number | symbol, never>
+    >;
   }
 }

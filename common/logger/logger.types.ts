@@ -16,5 +16,9 @@ export interface ILoggerService {
 }
 
 // Tokens for DI
-export const LoggerConfigToken = Type<ILoggerOptions>("LoggerConfig");
-export const LoggerServiceToken = Type<ILoggerService>("LoggerService");
+export const LoggerConfigToken: Type<ILoggerOptions> = Type<ILoggerOptions>(
+  "LoggerConfig",
+);
+export const LoggerServiceToken: Type<ILoggerService> = Type<ILoggerService>(
+  "LoggerService",
+);

@@ -4,7 +4,10 @@ await emptyDir("./.npm");
 
 await build({
   entryPoints: ["./mod.ts"],
-  outDir: "./npm",
+  outDir: "./.npm",
+  typeCheck: false,
+  test: false,
+  skipSourceOutput: true,
   shims: {
     // Deno provides a set of standard shims for Node.js compatibility
     deno: true,
@@ -21,5 +24,13 @@ await build({
     version: "0.1.0",
     description: "Your package description",
     license: "MIT",
+    devDependencies: {
+      "@types/amqplib": "^0.10.5",
+      "@types/lodash-es": "^4.17.12",
+    },
   },
+  postBuild() {
+    Deno.copyFileSync(".npmrc", ".npm/.npmrc");
+  },
+  importMap: "./deno.json",
 });

@@ -1,6 +1,5 @@
 import { Type } from "di-wise";
 
-// @deno-types="npm:@types/amqplib@^0.10.6"
 import type { Options } from "amqplib";
 
 export interface AmqpConnectionOptions {
@@ -31,6 +30,6 @@ export interface AmqpConnectionOptions {
   clientName?: string;
 }
 
-export const AmqpConnectionOptionsToken = Type<AmqpConnectionOptions>(
-  "AmqpConnectionOptions"
-);
+export const AmqpConnectionOptionsToken: Type<AmqpConnectionOptions> = Type<
+  AmqpConnectionOptions
+>("AmqpConnectionOptions");

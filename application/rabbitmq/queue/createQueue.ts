@@ -15,7 +15,7 @@ import type { ILoggerService } from "../../../common/mods.ts";
 export function createQueue<MsgType>(
   connection: AmqpConnectionManager,
   queueName: string,
-  logger: ILoggerService
+  logger: ILoggerService,
 ): Queue<MsgType> {
   let push: ((value: MsgType) => void) | null = null;
   let done: (() => void) | null = null;

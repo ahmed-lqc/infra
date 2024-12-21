@@ -4,7 +4,7 @@ import {
   connect as connectAMQP,
 } from "amqp-connection-manager";
 
-// @deno-types="npm:@types/amqplib@^0.10.6"
+// @deno-types="@types/amqplib"
 import type { ConfirmChannel, Options } from "amqplib";
 import {
   type ILoggerService,
@@ -87,7 +87,7 @@ export class AmqpManager {
     });
 
     this.defaultChannel = await this.createConfirmChannel(
-      this.options.clientName ?? "amqp-client"
+      this.options.clientName ?? "amqp-client",
     );
     this.initialized = true;
   }
@@ -121,7 +121,7 @@ export class AmqpManager {
   getConnection(): AmqpConnectionManager {
     if (!this.initialized) {
       throw new Error(
-        "AMQP Manager is not initialized yet. Call init() first."
+        "AMQP Manager is not initialized yet. Call init() first.",
       );
     }
     return this.connection;
@@ -151,7 +151,7 @@ export class AmqpManager {
    * @returns A promise that resolves to the created `ConfirmChannel` instance.
    */
   async createNewChannel(
-    setup?: (channel: ConfirmChannel) => Promise<void>
+    setup?: (channel: ConfirmChannel) => Promise<void>,
   ): Promise<ConfirmChannel> {
     const channelWrapper = this.connection.createChannel({
       json: false,
@@ -177,7 +177,7 @@ export class AmqpManager {
     channel: ConfirmChannel,
     exchange: string,
     type: string = "topic",
-    options?: Options.AssertExchange
+    options?: Options.AssertExchange,
   ): Promise<void> {
     await channel.assertExchange(exchange, type, options);
     this.logger.log(`Exchange "${exchange}" is ready.`);
@@ -207,13 +207,13 @@ export class AmqpManager {
       exchange?: string;
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
-    } = {}
+    } = {},
   ): Promise<string> {
     const { queue } = await channel.assertQueue(queueName, queueOptions);
     if (exchange && routingKey) {
       await channel.bindQueue(queue, exchange, routingKey);
       this.logger.log(
-        `Queue "${queue}" bound to "${exchange}" with "${routingKey}"`
+        `Queue "${queue}" bound to "${exchange}" with "${routingKey}"`,
       );
     }
     this.logger.log(`Queue "${queue}" is ready.`);

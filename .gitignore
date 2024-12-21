@@ -1,1 +1,31 @@
-./.npm
+.npm/# Deno standard ignores
+*.log
+*.tsbuildinfo
+*.env
+.DS_Store
+
+# Node.js modules directory (if using Node compatibility)
+node_modules/
+
+# Deno cache directory
+deno_dir/
+
+# Output directories
+dist/
+build/
+.npm/
+
+# Test coverage reports
+coverage/
+
+# IDE/editor directories and settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# MacOS generated files
+.DS_Store

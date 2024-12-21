@@ -5,7 +5,7 @@ export function honoYogaMiddleware(
   yoga: YogaServerInstance<
     Record<string | number | symbol, never>,
     Record<string | number | symbol, never>
-  >
+  >,
 ): MiddlewareHandler {
   return async (c: Context) => {
     const { req } = c;

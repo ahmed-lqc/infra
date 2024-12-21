@@ -8,6 +8,7 @@
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@0.226": "0.226.0",
     "jsr:@std/assert@^1.0.10": "1.0.10",
+    "jsr:@std/async@^1.0.9": "1.0.9",
     "jsr:@std/bytes@0.223": "0.223.0",
     "jsr:@std/data-structures@^1.0.5": "1.0.5",
     "jsr:@std/expect@*": "1.0.10",
@@ -36,6 +37,7 @@
     "npm:@graphql-yoga/plugin-graphql-sse@*": "3.10.6_graphql@16.10.0_graphql-yoga@5.10.6__graphql@16.10.0",
     "npm:@graphql-yoga/plugin-graphql-sse@^3.10.6": "3.10.6_graphql@16.10.0_graphql-yoga@5.10.6__graphql@16.10.0",
     "npm:@types/amqplib@~0.10.6": "0.10.6",
+    "npm:@types/lodash-es@^4.17.12": "4.17.12",
     "npm:@types/lodash-es@^4.17.6": "4.17.12",
     "npm:@types/node@*": "22.5.4",
     "npm:amqp-connection-manager@*": "4.1.14_amqplib@0.10.5",
@@ -86,6 +88,9 @@
       "dependencies": [
         "jsr:@std/internal"
       ]
+    },
+    "@std/async@1.0.9": {
+      "integrity": "c6472fd0623b3f3daae023cdf7ca5535e1b721dfbf376562c0c12b3fb4867f91"
     },
     "@std/bytes@0.223.0": {
       "integrity": "84b75052cd8680942c397c2631318772b295019098f40aac5c36cead4cba51a8"
@@ -153,6 +158,7 @@
       "integrity": "aa5f0507352449064b09eff70ac1b6da3f765ee66bcc20dad9e5e433776580d5",
       "dependencies": [
         "jsr:@std/assert@^1.0.10",
+        "jsr:@std/async",
         "jsr:@std/data-structures",
         "jsr:@std/fs@^1.0.7",
         "jsr:@std/internal",
@@ -631,6 +637,7 @@
       "npm:@graphql-yoga/plugin-defer-stream@^3.10.6",
       "npm:@graphql-yoga/plugin-graphql-sse@^3.10.6",
       "npm:@types/amqplib@~0.10.6",
+      "npm:@types/lodash-es@^4.17.12",
       "npm:amqp-connection-manager@^4.1.14",
       "npm:amqplib@~0.10.5",
       "npm:di-wise@~0.2.8",

@@ -1,9 +1,3 @@
 {
-  "compilerOptions": {
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "types": ["node"]
-  }
+  "exclude": ["node_modules", ".npm"]
 }

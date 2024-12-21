@@ -7,7 +7,7 @@ import {
 import { SubgraphToken, type SubgraphType } from "../graphql/subgraph.types.ts";
 import { Buffer } from "node:buffer";
 
-// @deno-types="npm:@types/amqplib@^0.10.6"
+// @deno-types="@types/amqplib"
 import type { Options } from "amqplib";
 
 import { QueueToken } from "../application/rabbitmq/queue/queue.tokens.ts";
@@ -39,12 +39,13 @@ export class FeatureModule implements FeatureModule {
    */
   async publishEvents<MsgType>(
     exchangeName: string,
-    routingKey: string
+    routingKey: string,
   ): Promise<this> {
     const amqpManager = this.appContainer.resolve(AmqpManager);
     const channel = amqpManager.getDefaultChannel();
-    const logger: ILoggerService =
-      this.appContainer.resolve(LoggerServiceToken);
+    const logger: ILoggerService = this.appContainer.resolve(
+      LoggerServiceToken,
+    );
 
     // Setup the exchange before creating the publisher
     await amqpManager.setupExchange(channel, exchangeName, "topic");
@@ -62,7 +63,7 @@ export class FeatureModule implements FeatureModule {
             const confirmed = channel.publish(exchangeName, routingKey, buffer);
             if (!confirmed) {
               logger.error(
-                `Failed to publish message to exchange ${exchangeName}`
+                `Failed to publish message to exchange ${exchangeName}`,
               );
               return false;
             }
@@ -71,7 +72,7 @@ export class FeatureModule implements FeatureModule {
           },
         }),
       },
-      { scope: Scope.Container }
+      { scope: Scope.Container },
     );
 
     return this;
@@ -100,11 +101,12 @@ export class FeatureModule implements FeatureModule {
       exchange?: string;
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
-    } = {}
+    } = {},
   ): Promise<this> {
     const amqpManager = this.container.resolve(AmqpManager);
-    const logger: ILoggerService =
-      this.appContainer.resolve(LoggerServiceToken);
+    const logger: ILoggerService = this.appContainer.resolve(
+      LoggerServiceToken,
+    );
     const channel = amqpManager.getDefaultChannel();
 
     // Ensure the queue is setup and ready
@@ -126,13 +128,13 @@ export class FeatureModule implements FeatureModule {
       {
         useFactory: () => createQueue<MsgType>(connection, actualQueue, logger),
       },
-      { scope: Scope.Container }
+      { scope: Scope.Container },
     );
 
     return this;
   }
 
-  getContainer() {
+  getContainer(): Container {
     return this.container;
   }
 }

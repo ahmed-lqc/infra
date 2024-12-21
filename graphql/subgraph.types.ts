@@ -3,8 +3,12 @@ import { Type } from "di-wise";
 
 export interface SubgraphType {
   path: string;
-  // deno-lint-ignore ban-types
-  getServer(): YogaServerInstance<{}, {}>;
+  getServer(): YogaServerInstance<
+    Record<string | number | symbol, never>,
+    Record<string | number | symbol, never>
+  >;
 }
 
-export const SubgraphToken = Type<SubgraphType>("SubgraphType");
+export const SubgraphToken: Type<SubgraphType> = Type<SubgraphType>(
+  "SubgraphType",
+);

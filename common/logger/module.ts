@@ -4,7 +4,7 @@ import { LoggerService } from "./logger-service.ts";
 
 export default function loggerModule(
   parentContainer: ReturnType<typeof createContainer>,
-  hideFields?: string[]
+  hideFields?: string[],
 ) {
   const container = createContainer({ parent: parentContainer });
 

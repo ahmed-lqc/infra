@@ -24,7 +24,7 @@ const exchangeTokenCache = new Map<string, Type<Exchange<unknown>>>();
  * @returns A `Type` for an `Exchange` implementation with the specified exchange name.
  */
 export function ExchangeToken<MsgType>(
-  exchangeName: string
+  exchangeName: string,
 ): Type<Exchange<MsgType>> {
   // Check if we already have a token for this exchangeName
   if (exchangeTokenCache.has(exchangeName)) {
