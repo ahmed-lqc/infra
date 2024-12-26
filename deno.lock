@@ -16,8 +16,9 @@
     "jsr:@std/fmt@0.223": "0.223.0",
     "jsr:@std/fmt@1": "1.0.3",
     "jsr:@std/fs@0.223": "0.223.0",
-    "jsr:@std/fs@1": "1.0.7",
+    "jsr:@std/fs@1": "1.0.8",
     "jsr:@std/fs@^1.0.7": "1.0.7",
+    "jsr:@std/fs@^1.0.8": "1.0.8",
     "jsr:@std/fs@~0.229.3": "0.229.3",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/io@0.223": "0.223.0",
@@ -26,8 +27,7 @@
     "jsr:@std/path@1.0.0-rc.1": "1.0.0-rc.1",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/path@~0.225.2": "0.225.2",
-    "jsr:@std/testing@*": "1.0.7",
-    "jsr:@std/testing@^1.0.7": "1.0.7",
+    "jsr:@std/testing@^1.0.8": "1.0.8",
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@apollo/subgraph@*": "2.9.3_graphql@16.10.0",
@@ -126,6 +126,12 @@
         "jsr:@std/path@^1.0.8"
       ]
     },
+    "@std/fs@1.0.8": {
+      "integrity": "161c721b6f9400b8100a851b6f4061431c538b204bb76c501d02c508995cffe0",
+      "dependencies": [
+        "jsr:@std/path@^1.0.8"
+      ]
+    },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
     },
@@ -154,13 +160,13 @@
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
     },
-    "@std/testing@1.0.7": {
-      "integrity": "aa5f0507352449064b09eff70ac1b6da3f765ee66bcc20dad9e5e433776580d5",
+    "@std/testing@1.0.8": {
+      "integrity": "ceef535808fb7568e91b0f8263599bd29b1c5603ffb0377227f00a8ca9fe42a2",
       "dependencies": [
         "jsr:@std/assert@^1.0.10",
         "jsr:@std/async",
         "jsr:@std/data-structures",
-        "jsr:@std/fs@^1.0.7",
+        "jsr:@std/fs@^1.0.8",
         "jsr:@std/internal",
         "jsr:@std/path@^1.0.8"
       ]
@@ -632,7 +638,7 @@
     "dependencies": [
       "jsr:@deno/dnt@~0.41.3",
       "jsr:@std/expect@^1.0.10",
-      "jsr:@std/testing@^1.0.7",
+      "jsr:@std/testing@^1.0.8",
       "npm:@apollo/subgraph@^2.9.3",
       "npm:@graphql-yoga/plugin-defer-stream@^3.10.6",
       "npm:@graphql-yoga/plugin-graphql-sse@^3.10.6",
