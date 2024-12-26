@@ -44,10 +44,12 @@
     "npm:amqp-connection-manager@^4.1.14": "4.1.14_amqplib@0.10.5",
     "npm:amqplib@~0.10.5": "0.10.5",
     "npm:di-wise@~0.2.8": "0.2.8",
+    "npm:graphql-tag@^2.12.6": "2.12.6_graphql@16.10.0",
     "npm:graphql-yoga@*": "5.10.6_graphql@16.10.0",
     "npm:graphql-yoga@^5.10.6": "5.10.6_graphql@16.10.0",
     "npm:hono@^4.6.14": "4.6.14",
-    "npm:lodash-es@*": "4.17.21"
+    "npm:lodash-es@*": "4.17.21",
+    "npm:lodash-es@^4.17.21": "4.17.21"
   },
   "jsr": {
     "@david/code-block-writer@13.0.3": {
@@ -461,6 +463,13 @@
         "graphql"
       ]
     },
+    "graphql-tag@2.12.6_graphql@16.10.0": {
+      "integrity": "sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==",
+      "dependencies": [
+        "graphql",
+        "tslib"
+      ]
+    },
     "graphql-yoga@5.10.6_graphql@16.10.0": {
       "integrity": "sha512-RqKTNN4ii/pnUhGBuFF3WyNy52AMs5ArTY/lGQUYH/1FQk5t2RgAZE5OxWRgobhmr+cuN066bvgVIlt4mnnRNA==",
       "dependencies": [
@@ -647,8 +656,10 @@
       "npm:amqp-connection-manager@^4.1.14",
       "npm:amqplib@~0.10.5",
       "npm:di-wise@~0.2.8",
+      "npm:graphql-tag@^2.12.6",
       "npm:graphql-yoga@^5.10.6",
-      "npm:hono@^4.6.14"
+      "npm:hono@^4.6.14",
+      "npm:lodash-es@^4.17.21"
     ]
   }
 }

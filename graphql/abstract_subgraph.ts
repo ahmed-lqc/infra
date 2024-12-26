@@ -1,16 +1,13 @@
 import { buildSubgraphSchema } from "@apollo/subgraph";
-import type { gql } from "https://deno.land/x/graphql_tag@0.1.2/mod.ts";
+import type { gql } from "graphql-tag";
 
 import type { GraphQLResolverMap } from "@apollo/subgraph/dist/schema-helper";
 import { useDeferStream } from "@graphql-yoga/plugin-defer-stream";
 import { useGraphQLSSE } from "@graphql-yoga/plugin-graphql-sse";
+import { inject } from "di-wise";
 import { createYoga, type YogaServerInstance } from "graphql-yoga";
+import { LoggerServiceToken } from "../common/logger/logger.types.ts";
 import type { SubgraphType } from "./subgraph.types.ts";
-import { Inject } from "di-wise";
-import {
-  type ILoggerService,
-  LoggerServiceToken,
-} from "../common/logger/logger.types.ts";
 
 export abstract class AbstractSubgraph<
   TResolvers extends Record<string, unknown>,
@@ -19,8 +16,9 @@ export abstract class AbstractSubgraph<
   abstract path: string;
 
   abstract resolvers: TResolvers;
-  @Inject(LoggerServiceToken)
-  private logger!: ILoggerService;
+
+  private logger = inject(LoggerServiceToken);
+
   protected getRoot = (): GraphQLResolverMap<unknown> => {
     return {
       ...this.resolvers,

@@ -1,19 +1,13 @@
-import { AutoRegister, Inject, Injectable, Scope, Scoped } from "di-wise";
 import {
   type AmqpConnectionManager,
   connect as connectAMQP,
 } from "amqp-connection-manager";
+import { AutoRegister, inject, Injectable, Scope, Scoped } from "di-wise";
 
 // @deno-types="@types/amqplib"
 import type { ConfirmChannel, Options } from "amqplib";
-import {
-  type ILoggerService,
-  LoggerServiceToken,
-} from "../../common/logger/logger.types.ts";
-import {
-  type AmqpConnectionOptions,
-  AmqpConnectionOptionsToken,
-} from "./amqp-connection-options.token.ts";
+import { LoggerServiceToken } from "../../common/logger/logger.types.ts";
+import { AmqpConnectionOptionsToken } from "./amqp-connection-options.token.ts";
 
 /**
  * The `AmqpManager` class is responsible for managing the connection to an AMQP (Advanced Message Queuing Protocol) broker, such as RabbitMQ. It provides methods for initializing the connection, creating channels, setting up exchanges and queues, and closing the connection.
@@ -30,14 +24,30 @@ import {
 @Scoped(Scope.Container)
 @AutoRegister()
 export class AmqpManager {
-  @Inject(LoggerServiceToken)
-  private logger!: ILoggerService;
+  /**
+   * The logger service instance, injected using dependency injection.
+   */
+  private logger = inject(LoggerServiceToken);
 
-  @Inject(AmqpConnectionOptionsToken)
-  private options!: AmqpConnectionOptions;
+  /**
+   * The AMQP connection options, injected using dependency injection.
+   */
 
+  private options = inject(AmqpConnectionOptionsToken);
+
+  /**
+   * The AMQP connection manager instance, which is used to establish and manage the connection to the AMQP broker.
+   */
   private connection!: AmqpConnectionManager;
+
+  /**
+   * The default AMQP channel used for AMQP operations.
+   */
   private defaultChannel!: ConfirmChannel;
+
+  /**
+   * Indicates whether the AMQP Manager has been initialized and is ready for use.
+   */
   private initialized = false;
 
   /**
@@ -87,7 +97,7 @@ export class AmqpManager {
     });
 
     this.defaultChannel = await this.createConfirmChannel(
-      this.options.clientName ?? "amqp-client",
+      this.options.clientName ?? "amqp-client"
     );
     this.initialized = true;
   }
@@ -121,7 +131,7 @@ export class AmqpManager {
   getConnection(): AmqpConnectionManager {
     if (!this.initialized) {
       throw new Error(
-        "AMQP Manager is not initialized yet. Call init() first.",
+        "AMQP Manager is not initialized yet. Call init() first."
       );
     }
     return this.connection;
@@ -151,7 +161,7 @@ export class AmqpManager {
    * @returns A promise that resolves to the created `ConfirmChannel` instance.
    */
   async createNewChannel(
-    setup?: (channel: ConfirmChannel) => Promise<void>,
+    setup?: (channel: ConfirmChannel) => Promise<void>
   ): Promise<ConfirmChannel> {
     const channelWrapper = this.connection.createChannel({
       json: false,
@@ -177,7 +187,7 @@ export class AmqpManager {
     channel: ConfirmChannel,
     exchange: string,
     type: string = "topic",
-    options?: Options.AssertExchange,
+    options?: Options.AssertExchange
   ): Promise<void> {
     await channel.assertExchange(exchange, type, options);
     this.logger.log(`Exchange "${exchange}" is ready.`);
@@ -207,13 +217,13 @@ export class AmqpManager {
       exchange?: string;
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
-    } = {},
+    } = {}
   ): Promise<string> {
     const { queue } = await channel.assertQueue(queueName, queueOptions);
     if (exchange && routingKey) {
       await channel.bindQueue(queue, exchange, routingKey);
       this.logger.log(
-        `Queue "${queue}" bound to "${exchange}" with "${routingKey}"`,
+        `Queue "${queue}" bound to "${exchange}" with "${routingKey}"`
       );
     }
     this.logger.log(`Queue "${queue}" is ready.`);

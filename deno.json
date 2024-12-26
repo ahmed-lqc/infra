@@ -16,8 +16,10 @@
     "amqp-connection-manager": "npm:amqp-connection-manager@^4.1.14",
     "amqplib": "npm:amqplib@^0.10.5",
     "di-wise": "npm:di-wise@^0.2.8",
+    "graphql-tag": "npm:graphql-tag@^2.12.6",
     "graphql-yoga": "npm:graphql-yoga@^5.10.6",
-    "hono": "npm:hono@^4.6.14"
+    "hono": "npm:hono@^4.6.14",
+    "lodash-es": "npm:lodash-es@^4.17.21"
   },
   "exclude": [".npm/**", ".git/**", "dist/**", "node_modules/**"]
 }

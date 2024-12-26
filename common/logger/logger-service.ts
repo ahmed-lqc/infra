@@ -1,5 +1,5 @@
 // @deno-types="@types/lodash-es"
-import { cloneDeep } from "npm:lodash-es";
+import { cloneDeep } from "lodash-es";
 import { inject, Injectable, Scope, Scoped } from "di-wise";
 import {
   type ILoggerOptions,
