@@ -30,6 +30,5 @@ export interface AmqpConnectionOptions {
   clientName?: string;
 }
 
-export const AmqpConnectionOptionsToken: Type<AmqpConnectionOptions> = Type<
-  AmqpConnectionOptions
->("AmqpConnectionOptions");
+export const AmqpConnectionOptionsToken: Type<AmqpConnectionOptions> =
+  Type<AmqpConnectionOptions>("AmqpConnectionOptions");
