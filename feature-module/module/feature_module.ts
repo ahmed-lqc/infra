@@ -4,23 +4,27 @@ import {
   createContainer,
   Scope,
 } from "di-wise";
-import { SubgraphToken, type SubgraphType } from "../graphql/subgraph.types.ts";
+import {
+  SubgraphToken,
+  type SubgraphType,
+} from "../../graphql/subgraph.types.ts";
 import { Buffer } from "node:buffer";
 
 // @deno-types="@types/amqplib"
 import type { Options } from "amqplib";
 
-import { QueueToken } from "../application/rabbitmq/queue/queue.tokens.ts";
-import { createQueue } from "../application/rabbitmq/queue/createQueue.ts";
+import { QueueToken } from "../../application/rabbitmq/queue/queue.tokens.ts";
+import { createQueue } from "../../application/rabbitmq/queue/createQueue.ts";
 
 import {
   type ILoggerService,
   LoggerServiceToken,
-} from "../common/logger/logger.types.ts";
-import { AmqpManager } from "../application/rabbitmq/amqp-manager.ts";
-import { ExchangeToken } from "../application/rabbitmq/exchange/exchange.tokens.ts";
+} from "../../common/logger/logger.types.ts";
+import { AmqpManager } from "../../application/rabbitmq/amqp-manager.ts";
+import { ExchangeToken } from "../../application/rabbitmq/exchange/exchange.tokens.ts";
+import type { IModule } from "./feature_module.interfaces.ts";
 
-export class FeatureModule implements FeatureModule {
+export class FeatureModule implements IModule {
   private container: Container;
   private appContainer: Container;
   constructor(appContainer: Container) {
@@ -28,8 +32,9 @@ export class FeatureModule implements FeatureModule {
     this.container = createContainer({ parent: appContainer });
   }
 
-  addSubgraph(subgraph: Constructor<SubgraphType>) {
+  addSubgraph(subgraph: Constructor<SubgraphType>): IModule {
     this.container.register(SubgraphToken, { useClass: subgraph });
+    return this as unknown as IModule;
   }
 
   /**
@@ -42,7 +47,7 @@ export class FeatureModule implements FeatureModule {
   async publishEvents<MsgType>(
     exchangeName: string,
     routingKey: string,
-  ): Promise<this> {
+  ): Promise<IModule> {
     const amqpManager = this.appContainer.resolve(AmqpManager);
     const channel = amqpManager.getDefaultChannel();
     const logger: ILoggerService = this.appContainer.resolve(
@@ -104,7 +109,7 @@ export class FeatureModule implements FeatureModule {
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
     } = {},
-  ): Promise<this> {
+  ): Promise<IModule> {
     const amqpManager = this.container.resolve(AmqpManager);
     const logger: ILoggerService = this.appContainer.resolve(
       LoggerServiceToken,
@@ -133,7 +138,7 @@ export class FeatureModule implements FeatureModule {
       { scope: Scope.Container },
     );
 
-    return this;
+    return this as unknown as IModule;
   }
 
   getContainer(): Container {

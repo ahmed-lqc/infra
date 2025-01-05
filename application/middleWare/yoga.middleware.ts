@@ -1,6 +1,16 @@
 import type { Context, MiddlewareHandler } from "hono";
 import type { YogaServerInstance } from "graphql-yoga";
 
+/**
+ * Middleware function that handles requests to a GraphQL Yoga server using the Hono framework.
+ *
+ * This middleware function is responsible for parsing the incoming request, extracting the necessary
+ * information (method, URL, headers, and body), and then forwarding the request to the GraphQL Yoga
+ * server for processing.
+ *
+ * @param yoga - The GraphQL Yoga server instance to use for handling the request.
+ * @returns A Hono middleware function that can be used in a Hono application.
+ */
 export function honoYogaMiddleware(
   yoga: YogaServerInstance<
     Record<string | number | symbol, never>,

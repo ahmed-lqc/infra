@@ -24,10 +24,12 @@ export function createQueue<MsgType>(
   /**
    * An async generator function that yields messages from a queue.
    *
-   * This function is used internally by the `createQueue` function to provide an async iterable of messages from the RabbitMQ queue.
+   * This function is used internally by the `createQueue` function to provide an async iterable
+   * that can be used to subscribe to messages from a RabbitMQ queue.
    *
-   * The generator function will wait for new messages to be pushed to the `messages` array, and then yield each message in the order they were received.
-   * If the `messages` array is empty and there are no more messages to be received, the generator will return.
+   * The generator function will wait for messages to be pushed to the `messages` array, and
+   * then yield each message one by one. If the `messages` array is empty and there are no
+   * pending pushes or completion signals, the generator will return.
    */
   async function* generator() {
     while (true) {
@@ -51,6 +53,10 @@ export function createQueue<MsgType>(
     }
   }
 
+  /**
+   * An async iterable that yields messages from the RabbitMQ queue.
+   * This iterable is returned by the `subscribe` method of the `createQueue` function.
+   */
   const asyncIterable = generator();
   connection.createChannel({
     setup: async (channel: Channel, _callback: (error?: Error) => void) => {
@@ -71,6 +77,10 @@ export function createQueue<MsgType>(
   });
 
   return {
+    /**
+     * Returns an async iterable that can be used to subscribe to messages from a RabbitMQ queue.
+     * The iterable will yield messages as they are received from the queue.
+     */
     subscribe() {
       return asyncIterable;
     },

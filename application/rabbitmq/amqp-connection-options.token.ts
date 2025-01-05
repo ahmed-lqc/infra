@@ -2,6 +2,9 @@ import { Type } from "di-wise";
 
 import type { Options } from "amqplib";
 
+/**
+ * Defines the options for configuring an AMQP connection.
+ */
 export interface AmqpConnectionOptions {
   /**
    * A list of AMQP URLs that `amqp-connection-manager` can try in order.
@@ -30,5 +33,9 @@ export interface AmqpConnectionOptions {
   clientName?: string;
 }
 
-export const AmqpConnectionOptionsToken: Type<AmqpConnectionOptions> =
-  Type<AmqpConnectionOptions>("AmqpConnectionOptions");
+/**
+ * A token representing the configuration options for an AMQP connection.
+ */
+export const AmqpConnectionOptionsToken: Type<AmqpConnectionOptions> = Type<
+  AmqpConnectionOptions
+>("AmqpConnectionOptions");
