@@ -6,7 +6,6 @@ import { Type } from "di-wise";
  */
 export interface Queue<MsgType> {
   subscribe(): AsyncIterable<MsgType>;
-  //Todo Could also provide manual ack if needed, but for SSE subscriptions and GraphQL, async iterable might suffice.
 }
 
 // A global cache for queue tokens
