@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-console
 // @deno-types="@types/lodash-es"
 import { cloneDeep } from "lodash-es";
 import { inject, Injectable, Scope, Scoped } from "di-wise";

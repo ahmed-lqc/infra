@@ -1,4 +1,22 @@
 {
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true
+  },
+  "lint": {
+    "rules": {
+      "include": [
+        "camelcase",
+        "no-sync-fn-in-async-fn",
+        "single-var-declarator",
+        "verbatim-module-syntax",
+        "no-console"
+      ]
+    }
+  },
   "name": "@lqc/infrastructure",
   "version": "0.2.5",
   "exports": "./mod.ts",

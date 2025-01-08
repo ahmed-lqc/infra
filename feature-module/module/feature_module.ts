@@ -46,12 +46,13 @@ export class FeatureModule implements IModule {
    */
   async publishEvents<MsgType>(
     exchangeName: string,
-    routingKey: string
+    routingKey: string,
   ): Promise<IModule> {
     const amqpManager = this.appContainer.resolve(AmqpManager);
     const channel = amqpManager.getDefaultChannel();
-    const logger: ILoggerService =
-      this.appContainer.resolve(LoggerServiceToken);
+    const logger: ILoggerService = this.appContainer.resolve(
+      LoggerServiceToken,
+    );
 
     // Setup the exchange before creating the publisher
     await amqpManager.setupExchange(channel, exchangeName, "topic");
@@ -69,7 +70,7 @@ export class FeatureModule implements IModule {
             const confirmed = channel.publish(exchangeName, routingKey, buffer);
             if (!confirmed) {
               logger.error(
-                `Failed to publish message to exchange ${exchangeName}`
+                `Failed to publish message to exchange ${exchangeName}`,
               );
               return false;
             }
@@ -78,48 +79,40 @@ export class FeatureModule implements IModule {
           },
         }),
       },
-      { scope: Scope.Container }
+      { scope: Scope.Container },
     );
 
     return this;
   }
 
   /**
-   * Subscribes to a queue with the given name, ensuring the queue is set up.
-   * This method:
-   * - Retrieves the AmqpManager from the parent container.
-   * - Sets up the queue using `amqpManager.setupQueue(...)`.
-   * - Registers a `Queue<MsgType>` token with the queue name.
-   * - Uses `createQueue(...)` to return an object implementing `Queue<MsgType>` that the rest of the module can inject.
+   * Subscribes to a RabbitMQ queue and creates a queue instance that can be used to consume messages.
+   * Sets up the queue using AmqpManager and registers a queue object under QueueToken.
    *
-   * @param queueName The name of the queue to subscribe to.
-   * @param exchange Optional exchange to bind the queue to.
-   * @param routingKey Optional routing key for binding.
-   * @returns A Promise that resolves to this FeatureModule for chaining.
+   * @param queueName - The name of the RabbitMQ queue to subscribe to.
+   * @param options - Optional configuration options for the queue, including the exchange name, routing key, and queue options.
+   * @returns A Promise that resolves to this application instance when the queue is ready.
    */
   async subscribeToQueue<MsgType>(
     queueName: string,
-    {
-      exchange,
-      routingKey,
-      queueOptions,
-    }: {
+    options?: {
       exchange?: string;
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
-    } = {}
+    },
   ): Promise<IModule> {
     const amqpManager = this.container.resolve(AmqpManager);
-    const logger: ILoggerService =
-      this.appContainer.resolve(LoggerServiceToken);
+    const logger: ILoggerService = this.appContainer.resolve(
+      LoggerServiceToken,
+    );
     const channel = amqpManager.getDefaultChannel();
 
     // Ensure the queue is setup and ready
-    const actualQueue = await amqpManager.setupQueue(channel, queueName, {
-      exchange,
-      routingKey,
-      queueOptions,
-    });
+    const actualQueue = await amqpManager.setupQueue(
+      channel,
+      queueName,
+      options,
+    );
 
     // Create a token and a factory that returns a Queue<MsgType> object
     const token = QueueToken<MsgType>(queueName);
@@ -133,7 +126,7 @@ export class FeatureModule implements IModule {
       {
         useFactory: () => createQueue<MsgType>(connection, actualQueue, logger),
       },
-      { scope: Scope.Container }
+      { scope: Scope.Container },
     );
 
     return this as unknown as IModule;

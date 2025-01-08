@@ -57,7 +57,7 @@ export abstract class AppHost {
    * The user can only call setPort, useRabbitmq, build, etc.
    */
   public abstract buildApp(
-    builder: IAppBuilderNoRegisterModule
+    builder: IAppBuilderNoRegisterModule,
   ): void | Promise<void>;
 
   /**
@@ -67,7 +67,7 @@ export abstract class AppHost {
    * @param module The module host to build and register.
    */
   public abstract registerModules(
-    registerModule: (module: Constructor<AbstractModuleHost>) => void
+    registerModule: (module: Constructor<AbstractModuleHost>) => void,
   ): void;
 
   /**
@@ -88,7 +88,7 @@ export abstract class AppHost {
     // 1) Build each module host & register the resulting module builder
     for (const host of moduleHosts) {
       const moduleBuilder: IModuleBuilder = host.buildModule(
-        this.container.resolve(ModuleBuilderToken)
+        this.container.resolve(ModuleBuilderToken),
       );
       this.appBuilder.registerModule(moduleBuilder);
     }
@@ -100,7 +100,7 @@ export abstract class AppHost {
       build: this.appBuilder.build.bind(this.appBuilder),
       withEnvConfig: this.appBuilder.withEnvConfig.bind(this.appBuilder),
       setParentContainer: this.appBuilder.setParentContainer.bind(
-        this.appBuilder
+        this.appBuilder,
       ),
     };
     builderNoRegister.setParentContainer(this.container);

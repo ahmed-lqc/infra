@@ -53,7 +53,7 @@ export class FeatureModuleBuilder implements IModuleBuilder {
     const publishEventsTasks = this.publishEventsTasks.map(
       async ({ exchange, queue }) => {
         await module.publishEvents(exchange, queue);
-      }
+      },
     );
     if (this.subGraphConstructor) {
       await module.subGraph(this.subGraphConstructor);
@@ -61,7 +61,7 @@ export class FeatureModuleBuilder implements IModuleBuilder {
     const subscribeToQueueTasks = this.subscribeToQueueTasks.map(
       async (queue) => {
         await module.subscribeToQueue(queue);
-      }
+      },
     );
     await Promise.all([...publishEventsTasks, ...subscribeToQueueTasks]);
     return module;

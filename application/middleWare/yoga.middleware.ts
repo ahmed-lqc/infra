@@ -29,7 +29,7 @@ export function honoYogaMiddleware(
       headers.set(key, value);
     }
 
-    let body: BodyInit | undefined;
+    let body: BodyInit | null = null;
     if (method !== "GET") {
       // For POST/PUT requests (queries and mutations), read the body
       const bodyText = await req.text();

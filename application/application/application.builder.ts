@@ -78,7 +78,7 @@ export class ApplicationBuilder implements IApplicationBuilder {
     if (this.rabbitmqOverrides) {
       await this.app.useRabbitmq(this.rabbitmqOverrides);
     }
-    const modules = await Promise.all(
+    await Promise.all(
       this.modules.map((m) => m.build(this.app.createModule()))
     );
     return this.app.listen(this.port);

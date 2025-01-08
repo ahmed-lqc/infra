@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-console
 import {
   afterEach,
   beforeAll,
@@ -76,49 +77,47 @@ describe("LoggerService (BDD style)", () => {
     logger.log("User login attempt", context);
 
     expect(infoCalls.length).toBe(1);
-    const [message, meta] = infoCalls[0];
+    const [message, meta] = infoCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("User login attempt");
     // Password should be masked
-    expect((meta as typeof context)?.body?.password).toBe("***");
+    expect((meta.body as Record<string, unknown>)?.password).toBe("***");
     // Context should be included
-    expect((meta as Record<string, unknown>)?.requestId).toBe("req-123");
-    expect((meta as Record<string, unknown>)?.logId).toBe("log-789");
-  });
 
+    expect(meta.requestId).toBe("req-123");
+    expect(meta.logId).toBe("log-789");
+  });
   it("should log error messages and mask tokens", () => {
     logger.error("Invalid token error", { token: "mySecretToken" });
 
     expect(errorCalls.length).toBe(1);
-    const [message, meta] = errorCalls[0];
+    const [message, meta] = errorCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("Invalid token error");
     // Token should be masked
-    expect((meta as Record<string, unknown>)?.token).toBe("***");
-    expect((meta as Record<string, unknown>)?.requestId).toBe("req-123");
+    expect(meta.token).toBe("***");
+    expect(meta.requestId).toBe("req-123");
   });
 
   it("should log warnings without sensitive fields", () => {
     logger.warn("Warning message", { info: "someInfo" });
 
     expect(warnCalls.length).toBe(1);
-    const [message, meta] = warnCalls[0];
+    const [message, meta] = warnCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("Warning message");
     // No sensitive field here, should remain as is
-    expect((meta as Record<string, unknown>)?.info).toBe("someInfo");
-    expect((meta as Record<string, unknown>)?.requestId).toBe("req-123");
+    expect(meta?.info).toBe("someInfo");
+    expect(meta?.requestId).toBe("req-123");
   });
-
   it("should log debug messages with masked fields", () => {
     const context = { body: { password: "anotherSecret" } };
     logger.debug("Debugging issue", context);
 
     expect(debugCalls.length).toBe(1);
-    const [message, meta] = debugCalls[0];
+    const [message, meta] = debugCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("Debugging issue");
     // Password should be masked
-    expect((meta as typeof context)?.body?.password).toBe("***");
-    expect((meta as Record<string, unknown>)?.requestId).toBe("req-123");
+    expect((meta.body as Record<string, unknown>)?.password).toBe("***");
+    expect(meta.requestId).toBe("req-123");
   });
-
   it("should log verbose messages and handle query and variables masking", () => {
     // A GraphQL scenario with sensitive field in query and variables
     logger.verbose("Executing GraphQL mutation", {
@@ -127,19 +126,15 @@ describe("LoggerService (BDD style)", () => {
     });
 
     expect(debugCalls.length).toBe(1); // verbose logs go to console.debug in this setup
-    const [message, meta] = debugCalls[0];
+    const [message, meta] = debugCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("Executing GraphQL mutation");
 
     // token should be masked in both query and variables
-    const query = (meta as Record<string, unknown>)?.query as string;
-    const variables = (meta as Record<string, unknown>)?.variables as Record<
-      string,
-      unknown
-    >;
+    const query = meta?.query as string;
+    const variables = meta?.variables as Record<string, unknown>;
     expect(query).toMatch(/token: "\*\*\*"/);
     expect(variables.token).toBe("***");
   });
-
   it("should allow updating context and logId dynamically", () => {
     const context = { body: { secret: "hidden" } };
     // Update context and logId
@@ -149,13 +144,13 @@ describe("LoggerService (BDD style)", () => {
     logger.log("Context updated", context);
 
     expect(infoCalls.length).toBe(1);
-    const [message, meta] = infoCalls[0];
+    const [message, meta] = infoCalls[0] as [string, Record<string, unknown>];
     expect(message).toBe("Context updated");
     // secret should be masked
-    expect((meta as typeof context)?.body?.secret).toBe("***");
+    expect((meta.body as Record<string, unknown>)?.secret).toBe("***");
     // Check updated context and logId
-    expect((meta as Record<string, unknown>)?.requestId).toBe("req-123");
-    expect((meta as Record<string, unknown>)?.logId).toBe("log-abc");
-    expect((meta as Record<string, unknown>)?.process).toBe("updated-process");
+    expect(meta.requestId).toBe("req-123");
+    expect(meta.logId).toBe("log-abc");
+    expect(meta.process).toBe("updated-process");
   });
 });

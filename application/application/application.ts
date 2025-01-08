@@ -67,7 +67,7 @@ export class Application implements IApplication {
    * @returns A Promise that resolves to the application instance.
    */
   async useRabbitmq(
-    overrides?: Partial<AmqpConnectionOptions>
+    overrides?: Partial<AmqpConnectionOptions>,
   ): Promise<IApplication> {
     const defaultOpts: AmqpConnectionOptions = {
       urls: [Deno.env.get("RABBITMQ_URL")!],
@@ -115,7 +115,7 @@ export class Application implements IApplication {
    */
   withEnvConfig<Shape extends z.ZodRawShape>(
     schema: z.ZodObject<Shape>,
-    partialOverrides?: Partial<z.infer<typeof schema>>
+    partialOverrides?: Partial<z.infer<typeof schema>>,
   ): IApplication {
     // 1) Attempt to read environment if allowed. If no permission, gracefully degrade or catch errors.
     const envData: Record<string, unknown> = {};
@@ -173,8 +173,9 @@ export class Application implements IApplication {
     // Resolve subgraphs from each module's container
     for (const mod of this.modules) {
       const moduleContainer = mod.getContainer();
-      const subgraphs: SubgraphType[] =
-        moduleContainer.resolveAll(SubgraphToken);
+      const subgraphs: SubgraphType[] = moduleContainer.resolveAll(
+        SubgraphToken,
+      );
       for (const subgraph of subgraphs) {
         const yoga = await subgraph.getServer();
         this.server.setRoute(subgraph.path, honoYogaMiddleware(yoga));
