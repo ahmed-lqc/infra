@@ -1,8 +1,9 @@
-import { Injectable, Scope } from "di-wise";
+import { type Constructor, Injectable, Scope } from "di-wise";
 import type { IModule, IModuleBuilder } from "./feature_module.interfaces.ts";
 import type { FeatureModule } from "./feature_module.ts";
 import { Scoped } from "di-wise";
-import { ModuleBuilderToken } from "../tokens.ts";
+import { ModuleBuilderToken } from "./tokens.ts";
+import type { SubgraphType } from "../../graphql/subgraph.types.ts";
 
 /**
  * Implements the `IModuleBuilder` interface to build a `FeatureModule` instance.
@@ -15,6 +16,7 @@ import { ModuleBuilderToken } from "../tokens.ts";
 export class FeatureModuleBuilder implements IModuleBuilder {
   private publishEventsTasks: { exchange: string; queue: string }[] = [];
   private subscribeToQueueTasks: string[] = [];
+  private subGraphConstructor: Constructor<SubgraphType> | undefined;
 
   /**
    * Registers a task to publish events to the specified exchange and queue.
@@ -24,6 +26,11 @@ export class FeatureModuleBuilder implements IModuleBuilder {
    */
   publishEvents(exchange: string, queue: string): IModuleBuilder {
     this.publishEventsTasks.push({ exchange, queue });
+    return this;
+  }
+
+  subGraph(subgraph: Constructor<SubgraphType>): IModuleBuilder {
+    this.subGraphConstructor = subgraph;
     return this;
   }
 
@@ -46,12 +53,15 @@ export class FeatureModuleBuilder implements IModuleBuilder {
     const publishEventsTasks = this.publishEventsTasks.map(
       async ({ exchange, queue }) => {
         await module.publishEvents(exchange, queue);
-      },
+      }
     );
+    if (this.subGraphConstructor) {
+      await module.subGraph(this.subGraphConstructor);
+    }
     const subscribeToQueueTasks = this.subscribeToQueueTasks.map(
       async (queue) => {
         await module.subscribeToQueue(queue);
-      },
+      }
     );
     await Promise.all([...publishEventsTasks, ...subscribeToQueueTasks]);
     return module;

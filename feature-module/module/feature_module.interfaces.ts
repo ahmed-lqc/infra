@@ -6,7 +6,7 @@ import type { Options } from "amqplib";
 export interface IModule {
   publishEvents<MsgType>(
     exchangeName: string,
-    routingKey: string,
+    routingKey: string
   ): Promise<IModule>;
   subscribeToQueue<MsgType>(
     queueName: string,
@@ -14,13 +14,14 @@ export interface IModule {
       exchange?: string;
       routingKey?: string;
       queueOptions?: Options.AssertQueue;
-    },
+    }
   ): Promise<IModule>;
-  addSubgraph(subgraph: Constructor<SubgraphType>): IModule;
+  subGraph(subgraph: Constructor<SubgraphType>): IModule;
 }
 
 export interface IModuleBuilder {
-  publishEvents(exchange: string, queue: string): IModuleBuilder;
-  subscribeToQueue(queue: string): IModuleBuilder;
+  subGraph(subgraph: Constructor<SubgraphType>): IModuleBuilder;
+  publishEvents<MsgType>(exchange: string, queue: string): IModuleBuilder;
+  subscribeToQueue<MsgType>(queue: string): IModuleBuilder;
   build(module: IModule): Promise<IModule>; // building returns a fully configured module
 }

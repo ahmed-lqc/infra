@@ -63,7 +63,7 @@ export class ApplicationBuilder implements IApplicationBuilder {
 
   withEnvConfig<SchemaType extends z.ZodRawShape>(
     schema: z.ZodObject<SchemaType>,
-    partialOverrides?: Partial<z.infer<z.ZodObject<SchemaType>>>,
+    partialOverrides?: Partial<z.infer<z.ZodObject<SchemaType>>>
   ): IApplicationBuilder {
     this.app.withEnvConfig(schema, partialOverrides);
     return this;
@@ -78,10 +78,9 @@ export class ApplicationBuilder implements IApplicationBuilder {
     if (this.rabbitmqOverrides) {
       await this.app.useRabbitmq(this.rabbitmqOverrides);
     }
-    await Promise.all(
-      this.modules.map((m) => m.build(this.app.createModule())),
+    const modules = await Promise.all(
+      this.modules.map((m) => m.build(this.app.createModule()))
     );
-
     return this.app.listen(this.port);
   }
 }

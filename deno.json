@@ -1,6 +1,6 @@
 {
   "name": "@lqc/infrastructure",
-  "version": "0.1.3",
+  "version": "0.2.5",
   "exports": "./mod.ts",
   "license": "UNLICENSED",
   "private": true,

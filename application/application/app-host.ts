@@ -1,8 +1,9 @@
-import { createContainer, Inject } from "di-wise";
+import { type Constructor, type Container, createContainer } from "di-wise";
 import {
   FeatureModuleBuilder,
   type IModuleBuilder,
   ModuleBuilderToken,
+  ModuleHostToken,
 } from "../../feature-module/mods.ts";
 import type { AbstractModuleHost } from "../../feature-module/module/module-host.ts";
 import { HonoServerRunner } from "../http/hono-server-runner.ts";
@@ -11,6 +12,7 @@ import type {
   IAppBuilderNoRegisterModule,
   IApplicationBuilder,
 } from "./application.interface.ts";
+import { Application } from "./application.ts";
 import { AppBuilderToken } from "./tokens.ts";
 
 /**
@@ -18,9 +20,10 @@ import { AppBuilderToken } from "./tokens.ts";
  * This includes registering the `ApplicationBuilder`, `FeatureModuleBuilder`, and `HonoServerRunner`.
  * The container can then be used to resolve these dependencies throughout the application.
  */
-export function buildContainer() {
+export function buildContainer(): Container {
   const container = createContainer();
   container.register(ApplicationBuilder);
+  container.register(Application);
   container.register(FeatureModuleBuilder);
   container.register(HonoServerRunner);
   return container;
@@ -36,16 +39,15 @@ export function buildContainer() {
  *    - calls .build() on the application builder
  */
 export abstract class AppHost {
-  protected readonly container = buildContainer();
+  protected readonly container: Container = buildContainer();
 
-  @Inject(AppBuilderToken)
   protected appBuilder!: IApplicationBuilder;
 
   constructor() {
     // Recreate container? Or just use the one from property initialization
     // If you prefer the same container instance, remove this line.
     this.container = buildContainer();
-    this.appBuilder;
+    this.appBuilder = this.container.resolve(AppBuilderToken);
   }
 
   /**
@@ -54,9 +56,19 @@ export abstract class AppHost {
    *
    * The user can only call setPort, useRabbitmq, build, etc.
    */
-  protected abstract buildApp(
-    builder: IAppBuilderNoRegisterModule,
+  public abstract buildApp(
+    builder: IAppBuilderNoRegisterModule
   ): void | Promise<void>;
+
+  /**
+   * Registers the provided module host with the application builder.
+   * This method is called for each module host to build and register the resulting module builder.
+   *
+   * @param module The module host to build and register.
+   */
+  public abstract registerModules(
+    registerModule: (module: Constructor<AbstractModuleHost>) => void
+  ): void;
 
   /**
    * The main method that orchestrates:
@@ -66,11 +78,17 @@ export abstract class AppHost {
    *  4) call buildApp(builderNoRegister)
    *  5) finally, appBuilder.build()
    */
-  protected async run(moduleHosts: AbstractModuleHost[]): Promise<void> {
+  async run(): Promise<void> {
+    this.registerModules((module: Constructor<AbstractModuleHost>) => {
+      this.container.register(ModuleHostToken, {
+        useClass: module,
+      });
+    });
+    const moduleHosts = this.container.resolveAll(ModuleHostToken);
     // 1) Build each module host & register the resulting module builder
     for (const host of moduleHosts) {
       const moduleBuilder: IModuleBuilder = host.buildModule(
-        this.container.resolve(ModuleBuilderToken),
+        this.container.resolve(ModuleBuilderToken)
       );
       this.appBuilder.registerModule(moduleBuilder);
     }
@@ -82,10 +100,10 @@ export abstract class AppHost {
       build: this.appBuilder.build.bind(this.appBuilder),
       withEnvConfig: this.appBuilder.withEnvConfig.bind(this.appBuilder),
       setParentContainer: this.appBuilder.setParentContainer.bind(
-        this.appBuilder,
+        this.appBuilder
       ),
     };
-
+    builderNoRegister.setParentContainer(this.container);
     // 3) Let the subclass do final configuration
     await this.buildApp(builderNoRegister);
 

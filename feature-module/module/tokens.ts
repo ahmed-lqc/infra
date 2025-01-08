@@ -1,6 +1,6 @@
 import { Type } from "di-wise";
-import type { IModuleBuilder } from "./module/feature_module.interfaces.ts";
-import type { AbstractModuleHost } from "./module/module-host.ts";
+import type { IModuleBuilder } from "./feature_module.interfaces.ts";
+import type { AbstractModuleHost } from "./module-host.ts";
 
 // For all module hosts
 export const ModuleHostToken: Type<AbstractModuleHost> = Type<
