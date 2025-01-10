@@ -20,6 +20,7 @@ export function honoYogaMiddleware(
   return async (c: Context) => {
     const { req } = c;
     const method = req.method;
+    let isUiRequest = false;
 
     // Parse the request URL
     const url = new URL(req.url);
@@ -28,15 +29,16 @@ export function honoYogaMiddleware(
     for (const [key, value] of Object.entries(req.header())) {
       headers.set(key, value);
     }
+    headers.get("accept")?.includes("text/html")
+      ? (isUiRequest = true)
+      : (isUiRequest = false);
 
     let body: BodyInit | null = null;
     if (method !== "GET") {
       // For POST/PUT requests (queries and mutations), read the body
       const bodyText = await req.text();
       body = bodyText;
-    } else {
-      // For GET requests (likely subscriptions), modify the pathname to include '/stream'
-      // This keeps query parameters intact since they are separate fields of the URL object.
+    } else if (!isUiRequest) {
       url.pathname = url.pathname + "/stream";
     }
 

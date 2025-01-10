@@ -35,9 +35,9 @@ export interface IApplicationBuilder {
   registerModule(module: IModuleBuilder): IApplicationBuilder; // any for brevity
   setPort(port: number): IApplicationBuilder;
   useRabbitmq(overrides: Partial<AmqpConnectionOptions>): IApplicationBuilder;
-  withEnvConfig<Shape extends z.ZodRawShape>(
-    schema: z.ZodObject<Shape>,
-    partialOverrides?: Partial<z.infer<typeof schema>>
+  withEnvConfig(schema: z.ZodTypeAny): IApplicationBuilder;
+  overrideEnvConfig(
+    partialOverrides: Record<string, unknown>
   ): IApplicationBuilder;
 
   build(): Promise<IApplication>;
@@ -49,7 +49,7 @@ export interface IApplicationBuilder {
  */
 export type IAppBuilderNoRegisterModule = Omit<
   IApplicationBuilder,
-  "registerModule"
+  "registerModule" | "withEnvConfig"
 >;
 
 /**

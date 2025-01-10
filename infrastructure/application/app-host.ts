@@ -1,4 +1,10 @@
 import { type Constructor, type Container, createContainer } from "di-wise";
+import type { ZodTypeAny } from "zod";
+import {
+  LoggerConfigToken,
+  LoggerServiceToken,
+} from "../common/logger/logger.types.ts";
+import { LoggerService } from "../common/mods.ts";
 import {
   FeatureModuleBuilder,
   type IModuleBuilder,
@@ -14,11 +20,6 @@ import type {
 } from "./application.interface.ts";
 import { Application } from "./application.ts";
 import { AppBuilderToken } from "./tokens.ts";
-import {
-  LoggerConfigToken,
-  LoggerServiceToken,
-} from "../common/logger/logger.types.ts";
-import { LoggerService } from "../common/mods.ts";
 
 /**
  * Builds and returns a DI container with the necessary registrations for the application.
@@ -63,6 +64,7 @@ export abstract class AppHost {
     this.appBuilder.setParentContainer(this.container);
   }
 
+  abstract configSchema: ZodTypeAny;
   /**
    * A protected method that is responsible for finalizing application configuration
    * (e.g. setting port, RabbitMQ, etc.) but excludes 'registerModule'.
@@ -92,6 +94,9 @@ export abstract class AppHost {
    *  5) finally, appBuilder.build()
    */
   async run(): Promise<void> {
+    if (this.configSchema) {
+      this.appBuilder.withEnvConfig(this.configSchema);
+    }
     this.registerModules((module: Constructor<AbstractModuleHost>) => {
       this.container.register(ModuleHostToken, {
         useClass: module,
@@ -111,7 +116,6 @@ export abstract class AppHost {
       setPort: this.appBuilder.setPort.bind(this.appBuilder),
       useRabbitmq: this.appBuilder.useRabbitmq.bind(this.appBuilder),
       build: this.appBuilder.build.bind(this.appBuilder),
-      withEnvConfig: this.appBuilder.withEnvConfig.bind(this.appBuilder),
       setParentContainer: this.appBuilder.setParentContainer.bind(
         this.appBuilder
       ),

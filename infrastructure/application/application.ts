@@ -142,7 +142,7 @@ export class Application implements IApplication {
     };
 
     // 6) Register it in the container
-    this.infraContainer.register(configToken, {
+    this.parentContainer.register(configToken, {
       useValue: configServiceImpl,
     });
 

@@ -20,6 +20,8 @@ export class ApplicationBuilder implements IApplicationBuilder {
   private rabbitmqOverrides?: Partial<AmqpConnectionOptions>;
   private port: number = 3000;
   private parentContainer!: Container;
+  private configSchema!: z.ZodObject<z.ZodRawShape>;
+  private partialOverrides: Record<string, unknown> = {};
 
   @Inject(AppToken)
   private app!: IApplication;
@@ -62,10 +64,16 @@ export class ApplicationBuilder implements IApplicationBuilder {
   }
 
   withEnvConfig<SchemaType extends z.ZodRawShape>(
-    schema: z.ZodObject<SchemaType>,
-    partialOverrides?: Partial<z.infer<z.ZodObject<SchemaType>>>
+    schema: z.ZodObject<SchemaType>
   ): IApplicationBuilder {
-    this.app.withEnvConfig(schema, partialOverrides);
+    this.configSchema = schema;
+    return this;
+  }
+
+  overrideEnvConfig(
+    partialOverrides: Record<string, unknown>
+  ): IApplicationBuilder {
+    this.partialOverrides = partialOverrides;
     return this;
   }
 
@@ -75,9 +83,13 @@ export class ApplicationBuilder implements IApplicationBuilder {
    */
   async build(): Promise<IApplication> {
     this.app.setParentContainer(this.parentContainer);
+    if (this.configSchema) {
+      this.app.withEnvConfig(this.configSchema, this.partialOverrides);
+    }
     if (this.rabbitmqOverrides) {
       await this.app.useRabbitmq(this.rabbitmqOverrides);
     }
+
     await Promise.all(
       this.modules.map((m) => m.build(this.app.createModule()))
     );
