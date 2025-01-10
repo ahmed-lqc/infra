@@ -1,0 +1,18 @@
+{
+  "name": "@lqc/infrastructure",
+  "version": "0.2.5",
+  "tasks": {
+    "test": "deno test .",
+    "lint": "deno lint .",
+    "npm": "deno run --allow-all build_npm.ts"
+  },
+  "exports": {
+    ".": "./mod.ts",
+    "./application": "./application/mod.ts",
+    "./feature-module": "./feature-module/mod.ts",
+    "./rabbitmq": "./rabbitmq/mod.ts",
+    "./graphql": "./graphql/mod.ts",
+    "./common": "./common/mod.ts"
+  },
+  "exclude": [".npm/**", "node_modules/**"]
+}

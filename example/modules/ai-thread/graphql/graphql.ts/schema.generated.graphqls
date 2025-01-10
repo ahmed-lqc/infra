@@ -1,0 +1,17 @@
+type AiThread {
+  content: String!
+  id: ID!
+  title: String!
+}
+
+type Mutation {
+  createAiThread(content: String!, title: String!): AiThread
+}
+
+type Query {
+  aiThread(id: ID!): AiThread
+}
+
+type Subscription {
+  aiThreadCreated: AiThread
+}

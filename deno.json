@@ -1,4 +1,8 @@
 {
+  "tasks": {
+    "test": "deno test .",
+    "lint": "deno lint ."
+  },
   "compilerOptions": {
     "strict": true,
     "exactOptionalPropertyTypes": true,
@@ -17,13 +21,27 @@
       ]
     }
   },
-  "name": "@lqc/infrastructure",
-  "version": "0.2.5",
+  "workspace": ["infrastructure", "example"],
   "exports": "./mod.ts",
   "license": "UNLICENSED",
   "private": true,
+  "exclude": [
+    ".git/**",
+    "dist/**",
+    "node_modules/**",
+    "infrastructure/.npm/**"
+  ],
   "imports": {
     "@apollo/subgraph": "npm:@apollo/subgraph@^2.9.3",
+    "@eddeee888/gcg-server-config": "npm:@eddeee888/gcg-server-config@^0.2.2",
+    "@graphql-codegen/cli": "npm:@graphql-codegen/cli@^5.0.3",
+    "@graphql-codegen/add": "npm:@graphql-codegen/add@^5.0.3",
+    "@parcel/watcher": "npm:@parcel/watcher@^2.5.0",
+    "di-wise": "npm:di-wise@^0.2.8",
+    "graphql": "npm:graphql@^16.10.0",
+    "graphql-scalars": "npm:graphql-scalars@^1.24.0",
+    "graphql-tag": "npm:graphql-tag@^2.12.6",
+    "graphql-yoga": "npm:graphql-yoga@5.10.6",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@graphql-yoga/plugin-defer-stream": "npm:@graphql-yoga/plugin-defer-stream@^3.10.6",
     "@graphql-yoga/plugin-graphql-sse": "npm:@graphql-yoga/plugin-graphql-sse@^3.10.6",
@@ -33,12 +51,8 @@
     "@types/lodash-es": "npm:@types/lodash-es@^4.17.12",
     "amqp-connection-manager": "npm:amqp-connection-manager@^4.1.14",
     "amqplib": "npm:amqplib@^0.10.5",
-    "di-wise": "npm:di-wise@^0.2.8",
-    "graphql-tag": "npm:graphql-tag@^2.12.6",
-    "graphql-yoga": "npm:graphql-yoga@^5.10.6",
     "hono": "npm:hono@^4.6.14",
     "lodash-es": "npm:lodash-es@^4.17.21",
     "zod": "npm:zod@^3.24.1"
-  },
-  "exclude": [".npm/**", ".git/**", "dist/**", "node_modules/**"]
+  }
 }

@@ -1,0 +1,21 @@
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.8", import: ["@key"])
+
+type Query {
+  aiThread(id: ID!): AiThread
+}
+
+type Mutation {
+  createAiThread(title: String!, content: String!): AiThread
+}
+
+type Subscription {
+  aiThreadCreated: AiThread
+}
+
+type AiThread @key(fields: "id") {
+  id: ID!
+  title: String!
+  content: String!
+}
+

@@ -1,0 +1,16 @@
+{
+  "name": "@lqc/example",
+  "version": "0.0.1",
+  "tasks": {
+    "test": "deno test .",
+    "lint": "deno lint .",
+    "dev": "deno run  --allow-all --watch ./main.ts",
+    "codegen": "deno run --allow-all --watch npm:@graphql-codegen/cli@5.0.3/graphql-codegen-esm -w"
+  },
+  "exports": {
+    ".": "./main.ts"
+  },
+  "imports": {
+    "@eddeee888/gcg-typescript-resolver-files": "npm:@eddeee888/gcg-typescript-resolver-files@^0.11.0"
+  }
+}
