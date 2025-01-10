@@ -119,6 +119,9 @@ export abstract class AppHost {
       setParentContainer: this.appBuilder.setParentContainer.bind(
         this.appBuilder
       ),
+      overrideEnvConfig: this.appBuilder.overrideEnvConfig.bind(
+        this.appBuilder
+      ),
     };
     builderNoRegister.setParentContainer(this.container);
     // 3) Let the subclass do final configuration
