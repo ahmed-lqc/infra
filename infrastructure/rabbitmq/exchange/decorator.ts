@@ -1,4 +1,4 @@
-import { type ClassFieldDecorator, Inject } from "di-wise";
+import { type ClassFieldDecorator, inject, Inject } from "di-wise";
 import { type Exchange, ExchangeToken } from "./exchange.tokens.ts";
 
 /**
@@ -8,8 +8,15 @@ import { type Exchange, ExchangeToken } from "./exchange.tokens.ts";
  * @returns A decorator function that can be applied to a class field.
  */
 export function InjectExchange<MsgType>(
-  exchangeName: string,
+  exchangeName: string
 ): ClassFieldDecorator<Exchange<MsgType>> {
   const token = ExchangeToken(exchangeName);
   return Inject(token) as ClassFieldDecorator<Exchange<MsgType>>;
+}
+
+export function injectExchange<MsgType>(
+  exchangeName: string
+): Exchange<MsgType> {
+  const token = ExchangeToken(exchangeName);
+  return inject(token) as Exchange<MsgType>;
 }

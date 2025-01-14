@@ -1,27 +1,24 @@
 import { type Container, Inject, Injectable, Scope, Scoped } from "di-wise";
-import type z from "zod";
+import type { IModuleBuilder } from "../feature-module/mods.ts";
+import type { AmqpConnectionOptions } from "../rabbitmq/mod.ts";
 import type {
   IApplication,
   IApplicationBuilder,
 } from "./application.interface.ts";
 import { AppBuilderToken, AppToken } from "./tokens.ts";
-import type { IModuleBuilder } from "../feature-module/mods.ts";
-import type { AmqpConnectionOptions } from "../rabbitmq/mod.ts";
 
 /**
  * The ApplicationBuilder class is responsible for configuring and building an application instance.
  * It allows registering module builders, setting the application port, and configuring RabbitMQ URLs.
  * The built application can then be started by calling the `build()` method.
  */
-@Injectable<ApplicationBuilder>(AppBuilderToken)
+@Injectable<ApplicationBuilder>(AppBuilderToken())
 @Scoped(Scope.Container)
 export class ApplicationBuilder implements IApplicationBuilder {
   private modules: IModuleBuilder[] = [];
   private rabbitmqOverrides?: Partial<AmqpConnectionOptions>;
   private port: number = 3000;
   private parentContainer!: Container;
-  private configSchema!: z.ZodObject<z.ZodRawShape>;
-  private partialOverrides: Record<string, unknown> = {};
 
   @Inject(AppToken)
   private app!: IApplication;
@@ -38,7 +35,7 @@ export class ApplicationBuilder implements IApplicationBuilder {
    */
   registerModule(module: IModuleBuilder): IApplicationBuilder {
     this.modules.push(module);
-    return this as unknown as IApplicationBuilder;
+    return this;
   }
 
   /**
@@ -63,29 +60,12 @@ export class ApplicationBuilder implements IApplicationBuilder {
     return this;
   }
 
-  withEnvConfig<SchemaType extends z.ZodRawShape>(
-    schema: z.ZodObject<SchemaType>
-  ): IApplicationBuilder {
-    this.configSchema = schema;
-    return this;
-  }
-
-  overrideEnvConfig(
-    partialOverrides: Record<string, unknown>
-  ): IApplicationBuilder {
-    this.partialOverrides = partialOverrides;
-    return this;
-  }
-
   /**
    * Builds the application instance by registering modules, configuring RabbitMQ, and starting the application on the specified port.
    * @returns A Promise that resolves to the started application instance.
    */
   async build(): Promise<IApplication> {
     this.app.setParentContainer(this.parentContainer);
-    if (this.configSchema) {
-      this.app.withEnvConfig(this.configSchema, this.partialOverrides);
-    }
     if (this.rabbitmqOverrides) {
       await this.app.useRabbitmq(this.rabbitmqOverrides);
     }

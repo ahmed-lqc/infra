@@ -2,14 +2,7 @@ import { type Container, Scope, Scoped } from "di-wise";
 import { SubgraphToken, type SubgraphType } from "../graphql/subgraph.types.ts";
 
 import { Inject, Injectable } from "di-wise";
-import type z from "zod";
-import { LoggerService } from "../common/logger/logger-service.ts";
-import {
-  LoggerConfigToken,
-  LoggerServiceToken,
-} from "../common/logger/logger.types.ts";
-import type { ConfigService } from "../config/config-service.ts";
-import { ConfigServiceToken } from "../config/tokens.ts";
+import { FeatureModule } from "../feature-module/module/feature_module.ts";
 import { honoYogaMiddleware } from "../graphql/middleWare/yoga.middleware.ts";
 import type { ServerRunner } from "../http/server-runner.ts";
 import { ServerRunnerToken } from "../http/tokens.ts";
@@ -19,7 +12,6 @@ import {
   AmqpConnectionOptionsToken,
 } from "../rabbitmq/amqp-connection-options.token.ts";
 import { AmqpManager } from "../rabbitmq/amqp-manager.ts";
-import { FeatureModule } from "../feature-module/module/feature_module.ts";
 import type { IApplication } from "./application.interface.ts";
 import { AppToken } from "./tokens.ts";
 
@@ -38,6 +30,12 @@ export class Application implements IApplication {
   @Inject(ServerRunnerToken)
   private server!: ServerRunner;
 
+  /**
+   * Sets the parent container for the application and creates a child container.
+   * This allows the application to have a separate container for infrastructure-level dependencies.
+   * @param infraContainer - The infrastructure-level container to use as the parent.
+   * @returns The application instance.
+   */
   setParentContainer(infraContainer: Container): IApplication {
     this.infraContainer = infraContainer;
     this.parentContainer = infraContainer.createChild();
@@ -49,7 +47,10 @@ export class Application implements IApplication {
    * @returns An instance of the created feature module.
    */
   createModule(): IModule {
-    const moduleInstance = new FeatureModule(this.parentContainer);
+    const moduleInstance = new FeatureModule(
+      this.parentContainer,
+      this.infraContainer
+    );
     this.addModule(moduleInstance);
     return moduleInstance;
   }
@@ -81,7 +82,7 @@ export class Application implements IApplication {
     // Resolve the AmqpManager and init the connection
     const amqpManager = this.parentContainer.resolve(AmqpManager);
     await amqpManager.init();
-    return this as unknown as IApplication;
+    return this;
   }
   /**
    * Adds a feature module to the application.
@@ -91,62 +92,6 @@ export class Application implements IApplication {
   addModule(module: FeatureModule): IApplication {
     this.modules.push(module);
     return this as unknown as IApplication;
-  }
-
-  /**
-   * Example monadic method that reads environment (and optional overrides),
-   * validates with Zod, and registers a ConfigService in the container.
-   *
-   * @param schema - a Zod schema describing the config shape
-   * @param configName - a unique name for the config token (default: "AppEnvConfig")
-   * @param partialOverrides - optional partial config to override environment or fallback
-   * @returns this (for chaining)
-   */
-  withEnvConfig<Shape extends z.ZodRawShape>(
-    schema: z.ZodObject<Shape>,
-    partialOverrides?: Partial<z.infer<typeof schema>>
-  ): IApplication {
-    // 1) Attempt to read environment if allowed. If no permission, gracefully degrade or catch errors.
-    const envData: Record<string, unknown> = {};
-    try {
-      for (const key of Object.keys(schema.shape)) {
-        // attempt to read from env
-        const val = Deno.env.get(key);
-        if (val !== undefined) {
-          // Optionally parse number, boolean, etc. This is naive string usage
-          envData[key] = val;
-        }
-      }
-    } catch {
-      // If no --allow-env, skip or log
-      // console.warn("Skipping environment reading: no permission or an error occurred.");
-    }
-
-    // 2) Merge envData with partialOverrides
-    const merged: Record<string, unknown> = {
-      ...envData,
-      ...partialOverrides,
-    };
-
-    // 3) Validate with Zod (applies defaults if .default(...) is used in schema)
-    const validatedConfig = schema.parse(merged);
-
-    // 4) Create or retrieve a config token for this configName
-    const configToken = ConfigServiceToken<z.infer<typeof schema>>();
-
-    // 5) Create a small object implementing ConfigService<SchemaType>
-    const configServiceImpl: ConfigService<z.infer<typeof schema>> = {
-      getConfig(): z.infer<typeof schema> {
-        return validatedConfig;
-      },
-    };
-
-    // 6) Register it in the container
-    this.parentContainer.register(configToken, {
-      useValue: configServiceImpl,
-    });
-
-    return this as unknown as IApplication; // monadic chaining
   }
 
   /**

@@ -17,10 +17,6 @@ export interface IApplication {
   addModule(module: IModule): IApplication;
   createModule(): IModule;
   useRabbitmq(overrides: Partial<AmqpConnectionOptions>): Promise<IApplication>;
-  withEnvConfig<Shape extends z.ZodRawShape>(
-    schema: z.ZodObject<Shape>,
-    partialOverrides?: Partial<z.infer<typeof schema>>
-  ): IApplication;
 }
 
 /**
@@ -35,10 +31,6 @@ export interface IApplicationBuilder {
   registerModule(module: IModuleBuilder): IApplicationBuilder; // any for brevity
   setPort(port: number): IApplicationBuilder;
   useRabbitmq(overrides: Partial<AmqpConnectionOptions>): IApplicationBuilder;
-  withEnvConfig(schema: z.ZodTypeAny): IApplicationBuilder;
-  overrideEnvConfig(
-    partialOverrides: Record<string, unknown>
-  ): IApplicationBuilder;
 
   build(): Promise<IApplication>;
 }
@@ -47,7 +39,7 @@ export interface IApplicationBuilder {
  * An interface that defines an application builder without the `registerModule` method.
  * This can be useful when you want to create an application builder that doesn't allow registering modules.
  */
-export type IAppBuilderNoRegisterModule = Omit<
+export type IAppBuilderNoRegisterModule<T extends z.ZodType<unknown>> = Omit<
   IApplicationBuilder,
   "registerModule" | "withEnvConfig"
 >;
@@ -56,6 +48,6 @@ export type IAppBuilderNoRegisterModule = Omit<
  * Defines an interface for an application builder that can register modules.
  * The `registerModule` method allows adding a module to the application builder.
  */
-export interface IRegisterModuleOnly {
+export interface IRegisterModuleOnly<T extends z.ZodType<unknown>> {
   registerModule(module: IModuleBuilder): IApplicationBuilder;
 }

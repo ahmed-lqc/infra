@@ -1,31 +1,29 @@
-import { AiThreadService } from "./ai_thread.service.ts";
-
 import {
   AbstractSubgraph,
-  type Exchange,
-  InjectExchange,
-  InjectQueue,
-  type Queue,
+  injectExchange,
+  injectQueue,
 } from "@lqc/infrastructure";
-import { Injectable } from "jsr:@exuanbo/di-wise";
+
+import { inject, Injectable } from "di-wise";
+import { typeDefs } from "./graphql/graphql.ts/typeDefs.generated.ts";
 import type {
   AiThread,
   Resolvers,
 } from "./graphql/graphql.ts/types.generated.ts";
-import { typeDefs } from "./graphql/graphql.ts/typeDefs.generated.ts";
+import { AiThreadServiceToken } from "./services/ai-thread/token.ts";
 
 @Injectable()
 export class AiThreadResolver extends AbstractSubgraph<Resolvers<unknown>> {
   override path = "ai-thread/graphql";
   override typeDefs = typeDefs;
 
-  private service = new AiThreadService();
-
-  @InjectQueue("deno-test-queue")
-  private testQueue!: Queue<AiThread>;
-
-  @InjectExchange<AiThread>("deno-test")
-  private testExchange!: Exchange<AiThread>;
+  constructor(
+    private readonly service = inject(AiThreadServiceToken),
+    private readonly testQueue = injectQueue<AiThread>("deno-test-queue"),
+    private readonly testExchange = injectExchange<AiThread>("deno-test-queue")
+  ) {
+    super();
+  }
 
   // Define the subscription logic as a class method so "this" is accessible
   private subscribeAiThreadCreated = async function* (

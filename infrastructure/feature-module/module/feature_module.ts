@@ -27,9 +27,12 @@ import type { IModule } from "./feature_module.interfaces.ts";
 export class FeatureModule implements IModule {
   private container: Container;
   private appContainer: Container;
-  constructor(appContainer: Container) {
+  private infraContainer: Container;
+
+  constructor(appContainer: Container, infraContainer: Container) {
     this.appContainer = appContainer;
     this.container = createContainer({ parent: appContainer });
+    this.infraContainer = infraContainer;
   }
 
   subGraph(subgraph: Constructor<SubgraphType>): IModule {
@@ -128,6 +131,21 @@ export class FeatureModule implements IModule {
     );
 
     return this as unknown as IModule;
+  }
+
+  service<T extends object>(service: Constructor<T>): IModule {
+    this.container.register(service);
+    return this;
+  }
+
+  appService<T extends object>(service: Constructor<T>): IModule {
+    this.appContainer.register(service);
+    return this;
+  }
+
+  infraService<T extends object>(service: Constructor<T>): IModule {
+    this.infraContainer.register(service);
+    return this;
   }
 
   getContainer(): Container {
